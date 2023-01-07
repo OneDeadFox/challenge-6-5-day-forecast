@@ -7,11 +7,34 @@
 //todo: on history item click load the current and 5 day weather data for specified location
 
 $ (function (){
-    let searchButton = $('search-btn');
-    let searchCrit = $('search-criteria')
+    let searchButton = $('#search-btn');
+    let searchCrit = $('#search-criteria')
 
-    searchButton.on('click', function(e){
-        var input = searchCrit.val();
-        console.log(input);
+    searchButton.on('click', function(){
+        //user input  
+        var input = '&location=' + searchCrit.val();
+
+        //position vars
+        var posAccessKey = '?key=ZFD5pPPWBtt5h0OFfjA2eC0JOkZpOdkd'
+        var requestPos = 'http://www.mapquestapi.com/geocoding/v1/address';
+        var returnedLat;
+        var returnedLng;
+        requestPos += posAccessKey + input;
+
+        //open weather vars
+        var weatherAccessKey = '?access_key=c33d28d593af473e62aaaced9c1ad9cd';
+
+        
+        //lat and lon request
+        fetch(requestPos)
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            returnedLat = data.results[0].locations[0].latLng.lat;
+            returnedLng = data.results[0].locations[0].latLng.lng;
+            console.log(data.results[0].locations[0].latLng.lat);
+            console.log(data.results[0].locations[0].latLng.lng);
+            });
     });
 });
