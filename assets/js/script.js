@@ -11,6 +11,7 @@ $ (function (){
     let searchCrit = $('#search-criteria');
     let weatherBanner = $('#weather-banner');
     let forecastDays = $('#forecast-days')
+    let pastSearches = [];
     let weatherIcon;
     let input;
 
@@ -18,7 +19,7 @@ $ (function (){
 
 //Event Listeners------------------------------------------------
     searchButton.on('click', function(){
-      //user input  
+      //user input
       input = '&location=' + searchCrit.val();  
       fetchForecast();
     });
@@ -27,16 +28,19 @@ $ (function (){
         var action = e;
         //check if enter key is pressed
         if(action.which == 13){
+          input = '&location=' + searchCrit.val();  
           fetchForecast();
         }
     });
 
 //Functions------------------------------------------------------
+    //store input in local storage and initiate search
     function initialSearch(){
       input = "&location=Seattle";
       fetchForecast();
     }
 
+    //fetch location data and use that to fetch weather data
     function fetchForecast(){
       //position vars
       var posAccessKey = 
@@ -81,16 +85,13 @@ $ (function (){
           requestWeather += returnedLat +returnedLng + weatherAccessKey;
           requestForecast += returnedLat + returnedLng +weatherAccessKey;
 
-          console.log(requestWeather);
-          console.log(requestForecast);
-
-          //fetch current weather data
+          //fetch current weather data---------------------------
           fetch(requestWeather)
             .then(function(res){
               return res.json();
             })
               .then(function(data){
-                console.log(data);
+                //set weather object key values
                 weather.city = data.name + ", " + data.sys.country;
                 weather.date = dayjs.unix(data.dt).format('MMM DD, YYYY');
                 weather.weatherType = data.weather[0].main;
@@ -98,9 +99,16 @@ $ (function (){
                 weather.temp = Math.round(1.8*(data.main.temp - 273) + 32);
                 weather.humidity = data.main.humidity;
                 weather.windSpeed = Math.round(data.wind.speed);
+
+                //set local storage
+                localStorage.setItem(`${data.name}`, searchCrit.val());
+                //call search hisorty function
+                setSearchHistory(data.name);
+                //delete search bar val
+                searchCrit.val('');
               });
 
-          //fetch forecast data
+          //fetch forecast data----------------------------------
           fetch(requestForecast)
             .then(function(res){
               return res.json();
@@ -210,12 +218,6 @@ $ (function (){
                   day.temp = Math.round(1.8*((day.temp.reduce((a, b) => a + b) / day.temp.length) - 273) + 32);
                   day.humidity = Math.round(day.humidity.reduce((a, b) => a + b) / day.humidity.length);
                   day.windSpeed = Math.round(day.windSpeed.reduce((a, b) => a + b) / day.windSpeed.length);
-                  
-
-                  console.log(day.temp);
-                  console.log(day.humidity);
-                  console.log(day.windSpeed);
-                  console.log(day.icon);
 
                 }
                 setWeatherBannerElement(weather);
@@ -224,10 +226,7 @@ $ (function (){
           });
     }
 
-    function emojiSetter(el){
-
-    }
-
+    //display fetched data in weather banner
     function setWeatherBannerElement(el){
       weatherIcon = $('<img id="banner-img">');
       weatherIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
@@ -235,7 +234,6 @@ $ (function (){
       //set banner heading
       weatherBanner.children('#city-date-weather').text(el.city + ' - ' + el.date + ' ' + el.weatherType);
       weatherBanner.children('#city-date-weather').append(weatherIcon)
-      console.log(weatherIcon);
 
       //set banner details
       weatherBanner.children('#banner-temp').text('Temp: ' + el.temp + '℉');
@@ -243,6 +241,7 @@ $ (function (){
       weatherBanner.children('#banner-wind').text('Wind: ' + el.windSpeed + 'MPH');
     }
 
+    //display fetched data in forecast cards
     function setForecastElements(arr){
       $('.card').remove();
       var forecastDays = $('#forecast-days')
@@ -282,5 +281,15 @@ $ (function (){
       }
     }
 
-    function setSearchHistory(){}
+    //create past search buttons
+    function setSearchHistory(cityName){
+      var fetchedCity = localStorage.getItem(`${cityName}`);
+      var searchList = $('#past-search-list')
+      var searchItem = $('<li class="list-group-item border border-light-subtle my-1 bg-dark text-light search-item">');
+      var pastitems = $('.search-item')
+      
+      pastSearches.unshift(fetchedCity);
+      pastitems.remove();
+
+    }
 });
