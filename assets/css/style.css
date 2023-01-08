@@ -1,0 +1,26 @@
+
+
+
+.bold{
+    font-weight: 800;
+}
+.card-img{
+    max-width: 50px;
+    margin-top: -40%;
+    margin-bottom: -40%;
+}
+
+.card-item{
+margin-top: 6%;
+margin-bottom: 6%;
+}
+
+#city-date-weather{
+    margin-bottom: -2%;
+}
+
+#banner-img{
+    margin-left: 2%;
+}
+
+
