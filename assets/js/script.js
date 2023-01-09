@@ -37,9 +37,8 @@ $ (function (){
         }
     });
 
-    searchList.on('click', '.custom-btn', function(){      console.log('in button')
+    searchList.on('click', '.custom-btn', function(){      
       var repeatSearchVal = $(this).context.innerText;
-      console.log(repeatSearchVal);
 
       input = '&location=' + repeatSearchVal;
       fetchForecast();
@@ -110,9 +109,6 @@ $ (function (){
                 weather.date = dayjs.unix(data.dt).format('MMM DD, YYYY');
                 weather.weatherType = data.weather[0].main;
                 weather.icon = data.weather[0].icon;
-
-                console.log(weather.icon)
-
                 weather.temp = Math.round(1.8*(data.main.temp - 273) + 32);
                 weather.humidity = data.main.humidity;
                 weather.windSpeed = Math.round(data.wind.speed);
@@ -250,7 +246,6 @@ $ (function (){
     function setWeatherBannerElement(el){
       weatherIcon = $('<img id="banner-img">');
       weatherIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
-      console.log(weatherIcon);
 
       //set banner heading
       weatherBanner.children('#city-date-weather').text(el.city + ' - ' + el.date + ' ' + el.weatherType);
@@ -315,14 +310,20 @@ $ (function (){
       var fetchedCity = fetchedArr[0];
       
       //find duplicates re reduce redundancy
-      var duplicate = pastSearches.indexOf(fetchedCity);
+      if(pastSearches != null){
+        console.log('in here');
+        var duplicate = pastSearches.indexOf(fetchedCity);
 
-      //put repeated search back at top and remove previous instance
-      if(duplicate != -1){
-        pastSearches.splice(duplicate, 1);
-        pastSearches.unshift(fetchedCity);
+        //put repeated search back at top and remove previous instance
+        if(duplicate != -1){
+          pastSearches.splice(duplicate, 1);
+          pastSearches.unshift(fetchedCity);
+        }else{
+          pastSearches.unshift(fetchedCity);
+        }
       }else{
-      pastSearches.unshift(fetchedCity);
+        pastSearches = [];
+        pastSearches.unshift(fetchedCity);
       }
 
       //delete old list items
@@ -334,26 +335,25 @@ $ (function (){
     }
 
     function fillList(arr){ 
+      if(arr != null){
+        for (let i = 0; i < arr.length; i++) {
+          var searchItem = $('<li class="search-item">');
+          var itemButton = $('<button type="button" class="btn btn-light custom-btn">');
+          var el = arr[i];
+          
+          //remove any element that would exist over index 5
+          while (arr.length > 6) {
+            arr.pop();
+          }
 
-      for (let i = 0; i < arr.length; i++) {
-        var searchItem = $('<li class="search-item">');
-        var itemButton = $('<button type="button" class="btn btn-light custom-btn">');
-        var el = arr[i];
-        
-        while (arr.length > 6) {
-          console.log('inwhile')
-          arr.pop();
+          //add elements to page
+          itemButton.text(el);
+          searchItem.append(itemButton);
+          searchList.append(searchItem);
+          oldSearchBtn = $('.custom-btn');
         }
-
-        itemButton.text(el);
-        searchItem.append(itemButton);
-        searchList.append(searchItem);
-        oldSearchBtn = $('.custom-btn');
-
       }
-    
-      
-      
+    //save array to local storage
     localStorage.setItem('currentList', JSON.stringify(arr));
     }
 
@@ -362,4 +362,7 @@ $ (function (){
 
       fillList(oldList);
     }
+    
 });
+//ls nuke
+//localStorage.clear();
