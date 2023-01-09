@@ -46,7 +46,7 @@ $ (function (){
       var posAccessKey = 
       '?key=ZFD5pPPWBtt5h0OFfjA2eC0JOkZpOdkd'
       var requestPos = 
-      'http://www.mapquestapi.com/geocoding/v1/address';
+      'https://www.mapquestapi.com/geocoding/v1/address';
       var returnedLat;
       var returnedLng;
       requestPos += posAccessKey + input;
@@ -285,11 +285,17 @@ $ (function (){
     function setSearchHistory(cityName){
       var fetchedCity = localStorage.getItem(`${cityName}`);
       var searchList = $('#past-search-list')
-      var searchItem = $('<li class="list-group-item border border-light-subtle my-1 bg-dark text-light search-item">');
       var pastitems = $('.search-item')
       
       pastSearches.unshift(fetchedCity);
       pastitems.remove();
 
+      for (let i = 0; i < pastSearches.length; i++) {
+        var searchItem = $('<li class="list-group-item border border-light-subtle my-1 bg-dark text-light search-item">');
+        var el = pastSearches[i];
+        
+        el.replace()
+
+      }
     }
 });
