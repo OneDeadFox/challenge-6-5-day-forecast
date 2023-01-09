@@ -1,5 +1,19 @@
 
 
+.custom-container{
+    background-color: #6c757d;
+}
+
+.custom-btn{
+    width: 100%;
+}
+
+.search-item{
+    margin-top: 3%;
+    margin-bottom: 3%;
+    background-color: none;
+    list-style: none;
+}
 
 .bold{
     font-weight: 800;
@@ -15,12 +29,17 @@ margin-top: 6%;
 margin-bottom: 6%;
 }
 
+.custom-card{
+    margin-bottom: 2%
+}
+
 #city-date-weather{
     margin-bottom: -2%;
 }
 
 #banner-img{
     margin-left: 2%;
+
 }
 
 

@@ -17,30 +17,25 @@
 />
 <title>Miniproject-5 Day Planner</title>
 </head>
-<body>
-    <div class="container">
-        <div class="row">
+<body class="custom-container">
+    <div class="container custom-container">
+        <div class="row custom-container">
             <header class="col-12 justify-content-center text-center rounded-bottom-4 bg-dark text-light">
                 <h1>Blockhead's Weather Center</h1>
             </header>
         </div>
-        <div class="row">
+        <div class="row custom-container">
             <aside class="col-3 justify-content-center text-center mt-3">
                 <header class="bg-dark text-light fs-4 rounded-top-4">Search for a City</header>
                 <div class="input-group input-group-sm bg-dark py-2 px-3">
                     <button class="input-group-text bg-dark text-light px-1 py-0" id="search-btn">City/Zip</button>
                     <input type="text" id="search-criteria" class="form-control shadow-none">
                 </div>
-                <ul class="list-group bg-dark px-3 pt-2 pb-3 rounded-top-0 rounded-bottom-4">
-                    <li class="list-group-item border border-light-subtle my-1 bg-dark text-light">Seattle</li>
-                    <li class="list-group-item border border-light-subtle my-1 bg-dark text-light">Denver</li>
-                    <li class="list-group-item border border-light-subtle my-1 bg-dark text-light">New York</li>
-                    <li class="list-group-item border border-light-subtle my-1 bg-dark text-light">London</li>
-                    <li class="list-group-item border border-light-subtle my-1 rounded-bottom-0 bg-dark text-light">Tokyo</li>
+                <ul id="past-search-list" class="list-group bg-dark px-3 pt-2 pb-3 rounded-top-0 rounded-bottom-4">
                 </ul>
             </aside>
-            <main class="col-9 ustify-content-center text-center mt-3 rounded-4">
-                <div class="row bg-dark justify-content-center">
+            <main class="col-9 ustify-content-center text-center mt-3">
+                <div class="row bg-dark justify-content-center rounded-top-4">
                     <div id="weather-banner" class="w-100 my-3 bg-light text-start">
                         <h3 id="city-date-weather"></h3>
                         <p id="banner-temp" class="weather-item"></p>
@@ -49,7 +44,7 @@
 
                     </div>
                 </div>
-                <div id="forecast-days" class="row bg-dark justify-content-around text-start">
+                <div id="forecast-days" class="row bg-dark justify-content-around align-items-center text-start rounded-bottom-4">
                 </div>
             </main>
         </div>

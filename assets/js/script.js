@@ -6,16 +6,20 @@
 //todo: store previous searches in search history which displays in list below search bar.
 //todo: on history item click load the current and 5 day weather data for specified location
 
+//todo: determine why the image request for banner sometimes fails
+
 $ (function (){
     let searchButton = $('#search-btn');
+    var searchList = $('#past-search-list')
     let searchCrit = $('#search-criteria');
     let weatherBanner = $('#weather-banner');
-    let forecastDays = $('#forecast-days')
-    let pastSearches = [];
+    let forecastDays = $('#forecast-days');
+    let oldSearchBtn;
     let weatherIcon;
     let input;
 
   initialSearch();
+  initalizeList();
 
 //Event Listeners------------------------------------------------
     searchButton.on('click', function(){
@@ -32,6 +36,16 @@ $ (function (){
           fetchForecast();
         }
     });
+
+    searchList.on('click', '.custom-btn', function(){      console.log('in button')
+      var repeatSearchVal = $(this).context.innerText;
+      console.log(repeatSearchVal);
+
+      input = '&location=' + repeatSearchVal;
+      fetchForecast();
+    });
+
+
 
 //Functions------------------------------------------------------
     //store input in local storage and initiate search
@@ -96,16 +110,23 @@ $ (function (){
                 weather.date = dayjs.unix(data.dt).format('MMM DD, YYYY');
                 weather.weatherType = data.weather[0].main;
                 weather.icon = data.weather[0].icon;
+
+                console.log(weather.icon)
+
                 weather.temp = Math.round(1.8*(data.main.temp - 273) + 32);
                 weather.humidity = data.main.humidity;
                 weather.windSpeed = Math.round(data.wind.speed);
 
                 //set local storage
-                localStorage.setItem(`${data.name}`, searchCrit.val());
+                var saveData = [data.name, searchCrit.val()]
+                localStorage.setItem(`${data.name}`, JSON.stringify(saveData));
                 //call search hisorty function
-                setSearchHistory(data.name);
+                if(searchCrit.val() != ''){
+                    setSearchHistory(data.name)
+                }
                 //delete search bar val
                 searchCrit.val('');
+                setWeatherBannerElement(weather);
               });
 
           //fetch forecast data----------------------------------
@@ -220,7 +241,6 @@ $ (function (){
                   day.windSpeed = Math.round(day.windSpeed.reduce((a, b) => a + b) / day.windSpeed.length);
 
                 }
-                setWeatherBannerElement(weather);
                 setForecastElements(fullForecast);
               });
           });
@@ -230,6 +250,7 @@ $ (function (){
     function setWeatherBannerElement(el){
       weatherIcon = $('<img id="banner-img">');
       weatherIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
+      console.log(weatherIcon);
 
       //set banner heading
       weatherBanner.children('#city-date-weather').text(el.city + ' - ' + el.date + ' ' + el.weatherType);
@@ -249,14 +270,15 @@ $ (function (){
       //set card items
       for (let i = 0; i < arr.length; i++) {
         //set card icon
-        var card = $('<div class="col-2 card">');
+        var card = $('<div class="col-2 card custom-card">');
         var cardIcon = $(`<img id="card-icon-${i}">`);
         cardIcon.attr('src', `http://openweathermap.org/img/wn/${arr[i].icon}@2x.png`);
         cardIcon.attr('class', 'card-img');
         
         //set card values
         card.attr('id', `day${i}`);
-        card.attr('class', 'col-2 card');
+
+        //set date
         card.append(`<p id="card${i}-date" class="card-item bold">`);
         card.children(`#card${i}-date`).text(arr[i].date);
 
@@ -283,19 +305,61 @@ $ (function (){
 
     //create past search buttons
     function setSearchHistory(cityName){
-      var fetchedCity = localStorage.getItem(`${cityName}`);
-      var searchList = $('#past-search-list')
-      var pastitems = $('.search-item')
+      var pastitems = $('.search-item') 
+      let pastSearches = JSON.parse(localStorage.getItem('currentList'));
+
+      //get stored info
+      var fetchedArr = JSON.parse(localStorage.getItem(`${cityName}`));
+
+      //get desired item from stored array
+      var fetchedCity = fetchedArr[0];
       
+      //find duplicates re reduce redundancy
+      var duplicate = pastSearches.indexOf(fetchedCity);
+
+      //put repeated search back at top and remove previous instance
+      if(duplicate != -1){
+        pastSearches.splice(duplicate, 1);
+        pastSearches.unshift(fetchedCity);
+      }else{
       pastSearches.unshift(fetchedCity);
+      }
+
+      //delete old list items
       pastitems.remove();
 
-      for (let i = 0; i < pastSearches.length; i++) {
-        var searchItem = $('<li class="list-group-item border border-light-subtle my-1 bg-dark text-light search-item">');
-        var el = pastSearches[i];
+      //make new list
+      fillList(pastSearches);
+      
+    }
+
+    function fillList(arr){ 
+
+      for (let i = 0; i < arr.length; i++) {
+        var searchItem = $('<li class="search-item">');
+        var itemButton = $('<button type="button" class="btn btn-light custom-btn">');
+        var el = arr[i];
         
-        el.replace()
+        while (arr.length > 6) {
+          console.log('inwhile')
+          arr.pop();
+        }
+
+        itemButton.text(el);
+        searchItem.append(itemButton);
+        searchList.append(searchItem);
+        oldSearchBtn = $('.custom-btn');
 
       }
+    
+      
+      
+    localStorage.setItem('currentList', JSON.stringify(arr));
+    }
+
+    function initalizeList(){
+      var oldList = JSON.parse(localStorage.getItem('currentList'))
+
+      fillList(oldList);
     }
 });
