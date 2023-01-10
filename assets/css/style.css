@@ -33,6 +33,11 @@ margin-bottom: 6%;
     margin-bottom: 2%
 }
 
+.small-heading{
+    font-weight: 400;
+    font-size: 60%;
+}
+
 #city-date-weather{
     margin-bottom: -2%;
 }
@@ -42,4 +47,23 @@ margin-bottom: 6%;
 
 }
 
+#band-img{
+    max-width: 50px;
+    margin-top: -40%;
+    margin-bottom: -40%;
+}
 
+
+#forecast-accordion{
+    display: none;
+}
+
+@media screen and (max-width: 768px) {  
+    #forecast-accordion{
+        display: block;
+    }
+
+    #main-display{
+        display: none;
+    }
+}

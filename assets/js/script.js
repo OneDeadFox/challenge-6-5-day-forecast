@@ -8,6 +8,11 @@
 
 //todo: determine why the image request for banner sometimes fails
 
+//todo: reduce the number of golbal variables if possible
+
+// const collapseElementList = document.querySelectorAll('.collapse')
+// const collapseList = [...collapseElementList].map(collapseEl => new bootstrap.Collapse(collapseEl))
+
 $ (function (){
     let searchButton = $('#search-btn');
     var searchList = $('#past-search-list')
@@ -75,6 +80,7 @@ $ (function (){
       //response receivers objects
       var weather = {
         city: '',
+        state: '',
         date: '', //unix result
         weatherType: '',
         temp: '', //kelvin result
@@ -90,9 +96,16 @@ $ (function (){
           return res.json();
         })
         .then(function(data){
+          //set state information
+          if(data.results[0].locations[0].adminArea3 != ""){
+          weather.state = ", " + data.results[0].locations[0].adminArea3 + ", ";
+          }else{
+            weather.state = ", "
+          }
           //get latitude and longitude of requested location
           returnedLat = 'lat=' + data.results[0].locations[0].latLng.lat;
           returnedLng = '&lon=' + data.results[0].locations[0].latLng.lng;
+          console.log(data);
           
           //update weater request info
           requestWeather += returnedLat +returnedLng + weatherAccessKey;
@@ -104,8 +117,10 @@ $ (function (){
               return res.json();
             })
               .then(function(data){
+                console.log(data);
                 //set weather object key values
-                weather.city = data.name + ", " + data.sys.country;
+                weather.city = data.name;
+                weather.state += data.sys.country;
                 weather.date = dayjs.unix(data.dt).format('MMM DD, YYYY');
                 weather.weatherType = data.weather[0].main;
                 weather.icon = data.weather[0].icon;
@@ -122,7 +137,10 @@ $ (function (){
                 }
                 //delete search bar val
                 searchCrit.val('');
+                //
                 setWeatherBannerElement(weather);
+                //the way the fetch functions are set up the accordion functions need to be separated into two functions that are called at the end of the fetch they relate to. Otherwise there are loading errors.
+                accordionHeader(weather);
               });
 
           //fetch forecast data----------------------------------
@@ -238,17 +256,23 @@ $ (function (){
 
                 }
                 setForecastElements(fullForecast);
+                accordionForecast(fullForecast);
               });
           });
     }
 
     //display fetched data in weather banner
     function setWeatherBannerElement(el){
+      //set up image and span elements
       weatherIcon = $('<img id="banner-img">');
       weatherIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
+      weatherSpan = $('<span class="small-heading">');
+      weatherHeader =$('#city-date-weather');
 
       //set banner heading
-      weatherBanner.children('#city-date-weather').text(el.city + ' - ' + el.date + ' ' + el.weatherType);
+      weatherBanner.children('#city-date-weather').text(el.city);
+      weatherSpan.text(el.state + ' - ' + el.date + ' ' + el.weatherType);
+      weatherHeader.append(weatherSpan);
       weatherBanner.children('#city-date-weather').append(weatherIcon)
 
       //set banner details
@@ -295,6 +319,59 @@ $ (function (){
         card.children(`#card${i}-wind`).text('Wind: ' + arr[i].windSpeed + 'MPH');
         
         forecastDays.append(card);
+      }
+    }
+
+    //display weather in accordian
+    //this feature is disigned for cell phone use only
+    function accordionHeader(el){
+      var weatherData = el;
+      var weatherBandHeader = $('#weather-heading');
+      var weatherBand = $('#weather-band')
+
+      //set up image and span elements 
+      weatherBandIcon = $('<img id="banner-img">');
+      weatherBandIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
+      weatherBandSpan = $('<span class="small-heading">');
+
+      console.log(weatherBandIcon)
+
+      //set banner heading
+      weatherBandHeader.children('.accordion-button').text(weatherData.city);
+      weatherBandSpan.text(weatherData.state + ' - ' + weatherData.date);
+      weatherBandHeader.children('.accordion-button').append(weatherBandSpan);
+      console.log(weatherBandHeader.children('.accordion-button'));
+
+
+      //set banner details
+      weatherBand.children('.accordion-temp').text(weatherData.temp + '℉');
+      weatherBand.children('.accordion-temp').append(weatherBandIcon);
+      weatherBand.children('.accordion-humidity').text('Humidity: ' + weatherData.humidity + '%');
+      weatherBand.children('.accordion-wind').text('Wind: ' + weatherData.windSpeed + 'MPH');
+    }
+
+    //display weather in accordian
+    //this feature is disigned for cell phone use only
+    function accordionForecast(arr){
+      var forecastData = arr;
+
+      for (let i = 0; i < forecastData.length; i++) {
+        var el = forecastData[i];
+        var dayHeading = $(`#day-heading-${i}`);
+        var dayBand = $(`#day-${i}-band`);
+        //set icon
+        var bandIcon = $(`<img class="accordion-img">`);
+        bandIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`);
+
+
+        console.log(dayBand);
+        
+        dayHeading.children(".accordion-button").text(el.date);
+        dayBand.children(".accordion-temp").text(el.temp + '℉');
+        dayBand.children(".accordion-temp").append(bandIcon)
+        dayBand.children(".accordion-humidity").text('Humidity: ' + el.humidity + '%');
+        dayBand.children(".accordion-wind").text('Wind: ' + el.windSpeed + 'MPH');
+        
       }
     }
 
