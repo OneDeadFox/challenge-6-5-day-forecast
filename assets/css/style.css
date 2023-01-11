@@ -1,10 +1,3 @@
-:root{
-    --background-color: #9ca3a8;
-    --main-text-color: #f8f9fa;
-    --dark-color: #212529;
-
-}
-
 .custom-container{
     background-color: #6c757d;
 }
@@ -41,10 +34,6 @@ margin-bottom: 6%;
 .small-heading{
     font-weight: 400;
     font-size: 60%;
-}
-
-.small-accordion-heading{
-    /* can change span font style but Like it better as h2 for now */
 }
 
 .accordion-temp{

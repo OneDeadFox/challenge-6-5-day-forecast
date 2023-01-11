@@ -105,8 +105,7 @@ $ (function (){
           //get latitude and longitude of requested location
           returnedLat = 'lat=' + data.results[0].locations[0].latLng.lat;
           returnedLng = '&lon=' + data.results[0].locations[0].latLng.lng;
-          console.log(data);
-          
+
           //update weater request info
           requestWeather += returnedLat +returnedLng + weatherAccessKey;
           requestForecast += returnedLat + returnedLng +weatherAccessKey;
@@ -117,7 +116,6 @@ $ (function (){
               return res.json();
             })
               .then(function(data){
-                console.log(data);
                 //set weather object key values
                 weather.city = data.name;
                 weather.state += data.sys.country;
@@ -334,14 +332,10 @@ $ (function (){
       weatherBandIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
       weatherBandSpan = $('<span class="small-accordion-heading">');
 
-      console.log(weatherBandIcon)
-
       //set banner heading
       weatherBandHeader.children('.accordion-button').text(weatherData.city);
       weatherBandSpan.text(weatherData.state + ' - ' + weatherData.date);
       weatherBandHeader.children('.accordion-button').append(weatherBandSpan);
-      console.log(weatherBandHeader.children('.accordion-button'));
-
 
       //set banner details
       weatherBand.children('.accordion-temp').text(weatherData.temp + '℉');
@@ -362,9 +356,6 @@ $ (function (){
         //set icon
         var bandIcon = $(`<img class="accordion-img">`);
         bandIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`);
-
-
-        console.log(dayBand);
         
         dayHeading.children(".accordion-button").text(el.date);
         dayBand.children(".accordion-temp").text(el.temp + '℉');
@@ -388,7 +379,6 @@ $ (function (){
       
       //find duplicates re reduce redundancy
       if(pastSearches != null){
-        console.log('in here');
         var duplicate = pastSearches.indexOf(fetchedCity);
 
         //put repeated search back at top and remove previous instance
