@@ -332,7 +332,7 @@ $ (function (){
       //set up image and span elements 
       weatherBandIcon = $('<img id="banner-img">');
       weatherBandIcon.attr('src', `http://openweathermap.org/img/wn/${el.icon}@2x.png`)
-      weatherBandSpan = $('<span class="small-heading">');
+      weatherBandSpan = $('<span class="small-accordion-heading">');
 
       console.log(weatherBandIcon)
 
